@@ -4,8 +4,10 @@
 #include <sstream>
 #include <string>
 
+#include "mapimage.hpp"
 #include "pathfind.hpp"
 #include "piece.hpp"
+#include "predefined_pieces.hpp"
 
 void basic_print(const Map<128, 128>& map, const std::vector<Position>& path);
 
@@ -53,6 +55,17 @@ int main(int argc, char** argv) {
             }
         }
     }
+
+    // Just to be safe
+    map[31, 31] = 0;
+    map[127, 63] = 0;
+
+    Piece wazir = {31, 31, PIECE_WAZIR_RULES};
+
+    auto path = pathfind_astar(map, wazir, {63, 127});
+
+    set_scale(12);
+    save_map_png(map, path, "map.png");
 
     return 0;
 }
