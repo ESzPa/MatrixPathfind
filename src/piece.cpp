@@ -1,31 +1,32 @@
 #include "piece.hpp"
 
-std::set<Move> Piece::generate_moves(const Map<128, 128>& map) const {
-    std::set<Move> moveset;
+std::set<Position> Piece::generate_movable_positions(const Map<128, 128>& map) const {
+    std::set<Position> newpos;
     for(MoveRule rule : rules) {
-        std::vector<Move> moves = moves_from_rule(map, rule, position);
-        moveset.insert(moves.begin(), moves.end());
+        std::vector<Position> pos = positions_from_rule(map, rule, position);
+        newpos.insert(pos.begin(), pos.end());
     }
-    return moveset;
+    return newpos;
 }
 
-std::vector<Move> moves_from_rule(const Map<128, 128>& map, MoveRule rule, Position position) {
-    auto out_of_bound = [&map](int64_t x, int64_t y) {
-        return (x >= map.width() || y >= map.height() || x < 0 || y < 0);
+std::vector<Position> positions_from_rule(const Map<128, 128>& map, MoveRule rule, Position position) {
+    auto invalid = [&map](int32_t x, int32_t y) {
+        return (x >= map.width() || y >= map.height() || x < 0 || y < 0 || map[y, x]);
     };
 
-    std::vector<Move> moves;
+    std::vector<Position> pos;
 
-    int64_t limit = rule.rule < 0 ? INT64_MAX : rule.rule;
+    int32_t limit = rule.rule < 0 ? INT32_MAX : rule.rule;
 
-    for(int64_t i = 1; i <= limit; ++i) {
+    for(int32_t i = 1; i <= limit; ++i) {
         Position newpos{position.x + rule.move.dx * i, position.y + rule.move.dy * i};
 
-        if(out_of_bound(newpos.x, newpos.y))
+        if(invalid(newpos.x, newpos.y)) {
             break;
+        }
 
-        moves.push_back({rule.move.dx * i, rule.move.dy * i});
+        pos.push_back(newpos);
     }
 
-    return moves;
+    return pos;
 }
