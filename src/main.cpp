@@ -56,15 +56,21 @@ int main(int argc, char** argv) {
         }
     }
 
+    std::mt19937 rng(std::random_device{}());
+    std::uniform_int_distribution<int> dist(0, 127);
+
+    Position start = {dist(rng), dist(rng)};
+    Position destination = {dist(rng), dist(rng)};
+
     // Just to be safe
-    map[31, 31] = 0;
-    map[127, 63] = 0;
+    map[start.y, start.x] = 0;
+    map[destination.y, destination.x] = 0;
 
-    Piece wazir = {31, 31, PIECE_WAZIR_RULES};
+    Piece wazir = {start.x, start.y, PIECE_WAZIR_RULES};
 
-    auto path = pathfind_astar(map, wazir, {63, 127});
+    auto path = pathfind_astar(map, wazir, {destination.x, destination.y});
 
-    set_scale(12);
+    set_scale(16);
     save_map_png(map, path, "map.png");
 
     return 0;
