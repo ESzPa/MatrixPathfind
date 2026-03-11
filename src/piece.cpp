@@ -1,6 +1,6 @@
 #include "piece.hpp"
 
-std::set<Position> Piece::generate_movable_positions(const Map<128, 128>& map) const {
+std::set<Position> Piece::generate_movable_positions(const FMap& map) const {
     std::set<Position> newpos;
     for(MoveRule rule : rules) {
         std::vector<Position> pos = positions_from_rule(map, rule, position);
@@ -9,7 +9,7 @@ std::set<Position> Piece::generate_movable_positions(const Map<128, 128>& map) c
     return newpos;
 }
 
-std::vector<Position> positions_from_rule(const Map<128, 128>& map, MoveRule rule, Position position) {
+std::vector<Position> positions_from_rule(const FMap& map, MoveRule rule, Position position) {
     auto invalid = [&map](int32_t x, int32_t y) {
         return (x >= map.width() || y >= map.height() || x < 0 || y < 0 || map[y, x]);
     };

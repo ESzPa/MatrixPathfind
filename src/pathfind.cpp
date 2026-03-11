@@ -19,7 +19,7 @@ size_t heuristic(const Position& a, const Position& b) {
     return std::abs(a.x - b.x) + std::abs(a.y - b.y);
 }
 
-std::vector<Position> pathfind_astar(const Map<128, 128>& map, Piece piece, Position destination) {
+std::vector<Position> pathfind_astar(const FMap& map, Piece piece, Position destination, FMap* visited) {
     auto key = [](Position p) { return (int64_t)p.x << 32 | (uint32_t)p.y; };
 
     std::priority_queue<AStarNode, std::vector<AStarNode>, AStarNodeCompare> q;
@@ -33,6 +33,8 @@ std::vector<Position> pathfind_astar(const Map<128, 128>& map, Piece piece, Posi
     while(!q.empty()) {
         AStarNode cur = q.top();
         q.pop();
+
+        (*visited)[cur.pos.y, cur.pos.x] = 1;
 
         if(gscore.contains(key(cur.pos)) && cur.g > (size_t)gscore[key(cur.pos)]) {
             continue;

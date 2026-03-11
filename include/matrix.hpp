@@ -11,6 +11,8 @@ class FlatMatrix {
   public:
     constexpr FlatMatrix() = default;
 
+    constexpr void fill(const T& value) { flat_matrix_.fill(value); }
+
     constexpr T& operator[](size_t y, size_t x) noexcept { return flat_matrix_[y * X + x]; }
     constexpr const T& operator[](size_t y, size_t x) const noexcept { return flat_matrix_[y * X + x]; }
 

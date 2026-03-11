@@ -9,10 +9,10 @@
 #include "piece.hpp"
 #include "predefined_pieces.hpp"
 
-void basic_print(const Map<128, 128>& map, const std::vector<Position>& path);
+void basic_print(const FMap& map, const std::vector<Position>& path);
 
 int main(int argc, char** argv) {
-    Map<128, 128> map;
+    FMap map;
 
     if(argc > 1) {
         std::ifstream file(argv[1]);
@@ -68,15 +68,17 @@ int main(int argc, char** argv) {
 
     Piece wazir = {start.x, start.y, PIECE_WAZIR_RULES};
 
-    auto path = pathfind_astar(map, wazir, {destination.x, destination.y});
+    FMap visited;
+    visited.fill(0);
+    auto path = pathfind_astar(map, wazir, {destination.x, destination.y}, &visited);
 
     set_scale(16);
-    save_map_png(map, path, "map.png");
+    save_map_png(map, path, visited, "map.png");
 
     return 0;
 }
 
-void basic_print(const Map<128, 128>& map, const std::vector<Position>& path) {
+void basic_print(const FMap& map, const std::vector<Position>& path) {
     std::set<Position> path_set(path.begin(), path.end());
 
     for(size_t y = 0; y < map.height(); ++y) {
